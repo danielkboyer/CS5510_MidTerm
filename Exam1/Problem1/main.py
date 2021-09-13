@@ -29,9 +29,9 @@ for t_setp in t_list:
     for dt in np.arange(0.0, max_time,t_setp):
         # for dt in range()
         
-        psi = psi + Psi_dot *t_setp
-        x = x + -v *np.sin(psi) *t_setp
-        y = y + v* np.cos(psi) *t_setp
+        psi = Psi_dot *dt
+        x = -v *np.sin(psi)
+        y = v* np.cos(psi)
         
         # x = x + -v *np.sin(psi) *dt
         # y = y + v* np.cos(psi) *dt
@@ -45,7 +45,7 @@ for t_setp in t_list:
     all_y = np.append(all_y,ylist)
     
     
-    ax.plot(xlist, ylist)
+    ax.plot(xlist, ylist,'o')
     # plt.grid()
     ax.spines['left'].set_position('zero')
     ax.spines['right'].set_color('none')
