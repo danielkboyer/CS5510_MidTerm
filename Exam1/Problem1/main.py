@@ -17,7 +17,10 @@ Psi_dot = V*np.tan(alpha)/L
 
 TWOPI = 2*np.pi
 
-fig, ax = plt.subplots()
+
+fig, (ax1, ax2) = plt.subplots(2, 1)
+fig.suptitle('A tale of 2 subplots')
+
 all_x =[]
 all_y =[]
 for t_setp in t_list:
@@ -31,17 +34,17 @@ for t_setp in t_list:
     x = -v *np.sin(psi) *dt
     y = v* np.cos(psi) *dt
     
+    ax1.plot(x, y)
     
-    # ax = fig.add_subplot(111)
+    # theta = Psi_dot *dt
     
-    
-    ax.plot(x, y)
+    # ax2.plot(dt,psi)
     
     all_x = np.append(all_x,x)
     all_y = np.append(all_y,y)
 
 
-lgd = ax.legend([ 'Lag ' + str(lag.size) for lag in all_x])
-
+lgd = ax1.legend([ 'Lag ' + str(lag.size) for lag in all_x])
+lgd = ax2.legend()
 plt.show()
 
