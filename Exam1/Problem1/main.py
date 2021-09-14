@@ -33,8 +33,8 @@ all_y =[]
 fig = plt.figure()
 ax = fig.add_subplot(121)
 ax_2 = fig.add_subplot(122)
-for i, t_setp in enumerate(t_list):
-    # t = np.arange(0.0, t_setp, max_time)
+for i, t_step in enumerate(t_list):
+    # t = np.arange(0.0, t_step, max_time)
     x = 0 
     y = 0
     psi = 0 
@@ -45,14 +45,14 @@ for i, t_setp in enumerate(t_list):
     y_help_list = []
     x_error_list =[]
     y_error_list = []
-    for dt in np.arange(0.0, max_time,t_setp):
+    for dt in np.arange(0.0, max_time,t_step):
         # for dt in range()
         
 
         
         # x = x + -v *np.sin(psi) *dt
         # y = y + v* np.cos(psi) *dt
-        # x = -v *np.sin(psi) *t_setp
+        # x = -v *np.sin(psi) *t_step
         # y = v* np.cos(psi) *dt
         
         xlist = np.append(xlist,x)
@@ -65,9 +65,9 @@ for i, t_setp in enumerate(t_list):
         x_help_list = np.append(x_help_list,exact_coords[0])
         y_help_list = np.append(y_help_list,exact_coords[1])
         y_error_list = np.append(y_error_list,GetMagnitude(x,y,exact_coords[0],exact_coords[1]))
-        psi =  psi + Psi_dot *t_setp
-        x +=  -v *np.sin(psi) * t_setp
-        y +=  v* np.cos(psi) * t_setp
+        psi =  psi + Psi_dot *t_step
+        x +=  -v *np.sin(psi) * t_step
+        y +=  v* np.cos(psi) * t_step
         
     all_x = np.append(all_x,xlist)
     all_y = np.append(all_y,ylist)
@@ -75,7 +75,7 @@ for i, t_setp in enumerate(t_list):
     
     if i ==0:
         ax.plot(x_help_list, y_help_list, 'c', label='continuous',  linewidth=LINEWIDTH)
-    ax.plot(xlist, ylist, colors[i], label=f'dt={t_setp}', linewidth=LINEWIDTH)
+    ax.plot(xlist, ylist, colors[i], label=f'dt={t_step}', linewidth=LINEWIDTH)
     ax_2.plot(x_error_list,y_error_list, colors[i], linewidth=LINEWIDTH)
     ax.legend()
     ax.spines['left'].set_position('zero')
