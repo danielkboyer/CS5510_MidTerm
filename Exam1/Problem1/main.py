@@ -1,5 +1,6 @@
 
 
+import time
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
@@ -21,7 +22,8 @@ v= 20
 colors = ['r', 'g', 'b', 'm', 'y']
 LINEWIDTH=0.8
 t_list = [.01, 0.1, 1]
-max_time =10
+max_time = 10
+
 
 L = 4
 alpha = -np.pi/6
@@ -49,9 +51,6 @@ for i, t_setp in enumerate(t_list):
     for dt in np.arange(0.0, max_time,t_setp):
         # for dt in range()
         
-        psi =  psi + Psi_dot *t_setp
-        x +=  -v *np.sin(psi) * t_setp
-        y +=  v* np.cos(psi) * t_setp
 
         
         # x = x + -v *np.sin(psi) *dt
@@ -69,6 +68,9 @@ for i, t_setp in enumerate(t_list):
         x_help_list = np.append(x_help_list,exact_coords[0])
         y_help_list = np.append(y_help_list,exact_coords[1])
         y_error_list = np.append(y_error_list,GetMagnitude(x,y,exact_coords[0],exact_coords[1]))
+        psi =  psi + Psi_dot *t_setp
+        x +=  -v *np.sin(psi) * t_setp
+        y +=  v* np.cos(psi) * t_setp
         
     all_x = np.append(all_x,xlist)
     all_y = np.append(all_y,ylist)
@@ -79,15 +81,13 @@ for i, t_setp in enumerate(t_list):
     ax.plot(xlist, ylist, colors[i], label=f'dt={t_setp}', linewidth=LINEWIDTH)
     ax_2.plot(x_error_list,y_error_list, colors[i], linewidth=LINEWIDTH)
     ax.legend()
-    # plt.grid()
     ax.spines['left'].set_position('zero')
     ax.spines['right'].set_color('none')
     ax.spines['bottom'].set_position('zero')
     ax.spines['top'].set_color('none')
 
-# lgd = ax1.legend([ 'Lag ' + str(lag.size) for lag in all_x])
-# lgd = ax2.legend()
-# plt.ioff()
+plt.ioff()
 plt.show()
-
-
+        
+    
+                                
