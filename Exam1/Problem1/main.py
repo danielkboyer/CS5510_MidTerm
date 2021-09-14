@@ -89,6 +89,5 @@ for i, t_setp in enumerate(t_list):
 # lgd = ax2.legend()
 # plt.ioff()
 plt.show()
-plt.savefig('plot.png')
 
 
