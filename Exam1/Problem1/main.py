@@ -18,8 +18,10 @@ def GetMagnitude(x,y,x_2,y_2):
     return np.sqrt((x_2 - x)*(x_2 - x) + (y_2 - y)*(y_2 - y))
 
 v= 20
-t_list = [.01]
-max_time =.02
+colors = ['r', 'g', 'b', 'm', 'y']
+LINEWIDTH=0.8
+t_list = [.01, 0.1, 1]
+max_time =10
 
 L = 4
 alpha = -np.pi/6
@@ -32,7 +34,7 @@ all_y =[]
 fig = plt.figure()
 ax = fig.add_subplot(121)
 ax_2 = fig.add_subplot(122)
-for t_setp in t_list:
+for i, t_setp in enumerate(t_list):
     # t = np.arange(0.0, t_setp, max_time)
     x = 0 
     y = 0
@@ -72,9 +74,11 @@ for t_setp in t_list:
     all_y = np.append(all_y,ylist)
     
     
-    ax.plot(xlist, ylist)
-    ax.plot(x_help_list, y_help_list)
-    ax_2.plot(x_error_list,y_error_list)
+    if i ==0:
+        ax.plot(x_help_list, y_help_list, 'c', label='continuous',  linewidth=LINEWIDTH)
+    ax.plot(xlist, ylist, colors[i], label=f'dt={t_setp}', linewidth=LINEWIDTH)
+    ax_2.plot(x_error_list,y_error_list, colors[i], linewidth=LINEWIDTH)
+    ax.legend()
     # plt.grid()
     ax.spines['left'].set_position('zero')
     ax.spines['right'].set_color('none')
@@ -85,5 +89,6 @@ for t_setp in t_list:
 # lgd = ax2.legend()
 # plt.ioff()
 plt.show()
+plt.savefig('plot.png')
 
 
