@@ -8,6 +8,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+class DumbController():
+    def choose(self,state):
+        theta = state[2]
+        w = state[3]
+        if abs(theta) < 0.06:
+            return 0 if w < 0 else 1
+        else:
+            return 0 if theta < 0 else 1
+
 class SingleValuePID():
     def __init__(self, expect_value, kp, ki, kd):
         self.expect_value = expect_value
@@ -81,7 +90,7 @@ if __name__ == "__main__":
     done = False
     total_reward = 0
 
-    input_value = float(1000)#100)#sys.argv[1])
+    input_value = float(3000)#100)#sys.argv[1])
     print(input_value)
 
     # (2, 0, 50)
@@ -90,14 +99,15 @@ if __name__ == "__main__":
     kd_position = 0
     
     # (-8, 0, -100)
-    kp_angle = 5
+    kp_angle = 200
     ki_angle = 0
     kd_angle = input_value
 
-    algo = SolverPID(0, 0,
-        kp_position, ki_position, kd_position,
-        kp_angle, ki_angle, kd_angle)
+    #algo = SolverPID(0, 0,
+    #   kp_position, ki_position, kd_position,
+    #    kp_angle, ki_angle, kd_angle)
 
+    algo = DumbController()
     # plotter = Plotter()
     data = [[],[],[],[]]
     time_steps = []
@@ -132,5 +142,5 @@ if __name__ == "__main__":
     axis[1].legend(['angle', 'pole_velocity'])
 
 
-    plt.plot()
+    plt.show()
     print(("total reward = ", total_reward))
