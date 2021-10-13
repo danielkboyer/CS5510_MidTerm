@@ -1,31 +1,86 @@
 import numpy as np
 
+goal = np.array((1.2, 0.8, 0.5))
+begining = 1.1 #d1
+end = 1.2 #d6
 
-ts = [0,3,4,5]
-ds = [1,2]
-vs = [0,0,0,0,0]
-d0 = 1
-d5 = 1.1
-
-def c(index):
-	return np.cos(vs[ts[index]])
-
-def s(index):
-	return np.sin(vs[ts[index]])
-
-def d(index):
-	return ds[index]
+ts = np.array([0, 3, 4, 5])
+ds = np.array([1, 2])
+variables = np.array([0.0,0.0,0.0,0.0,0.0,0.0]) # t1, d2, d3, t4, t5, t6
 
 
-r11 = c(0)*c(3)*c(4)*c(5) - c(0)*s(3)*s(5) + s(0)*s(4)*c(5)
-r21 = s(0)*c(3)*c(4)*c(5) - s(0)*s(3)*s(5) - c(0)*s(4)*s(5)
-r31 = -s(3)*c(4)*c(5) - c(3)*s(5)
-r12 = -s(0)*c(3)*c(4)*s(5) - c(0)*s(3)*c(5) - s(0)*s(4)*c(5)
-r22 = -s(0)*c(3)*c(4)*s(5) - s(0)*s(3)*c(5) + c(0)*s(4)*c(5)
-r32 = s(3)*c(4)*c(5) - c(3)*c(5)
-r13 = c(0)*c(3)*s(4) - s(0)*c(4)
-r23 = s(0)*c(3)*s(5) + c(0)*c(4)
-r33 = -s(3)*s(4)
-dx = c(0)*c(3)*s(4)*d(1) -s(0)*c(4)*d(1) - s(0)*d(0)
-dy = s(0)*c(3)*s(5)*d(1) + c(0)*c(4)*d(1) + c(0)*d(1)
-dz = -s(3)*s(4)*d(1) + d0 + d(1)
+
+
+def random_step(curr_variables):
+	new_variables = np.array([i for i in curr_variables])
+	for index in ts:
+		new_variables[index] += np.pi * 2 * (np.random.rand() - 0.5) * 2
+
+	for index in ds:
+		new_variables[index] += np.random.rand() * 0.005
+
+	return new_variables
+
+
+def cost(p1, p2): # distance between points
+	return np.linalg.norm(p1 - p2)
+
+def get_T_matrix(variables):
+	def c(index):
+		return np.cos(variables[index-1])
+
+	def s(index):
+		return np.sin(variables[index-1])
+
+	def d(index):
+		return variables[index-1]
+	r11 = c(1)*c(4)*c(5)*c(6) - c(1)*s(4)*s(6) + s(1)*s(5)*c(6)
+	r21 = s(1)*c(4)*c(5)*c(6) - s(1)*s(4)*s(6) - c(1)*s(5)*s(6)
+	r31 = -s(4)*c(5)*c(6) - c(4)*s(6)
+	r12 = -s(1)*c(4)*c(5)*s(6) - c(1)*s(4)*c(6) - s(1)*s(5)*c(6)
+	r22 = -s(1)*c(4)*c(5)*s(6) - s(1)*s(4)*c(6) + c(1)*s(5)*c(6)
+	r32 = s(4)*c(5)*c(6) - c(4)*c(6)
+	r13 = c(1)*c(4)*s(5) - s(1)*c(5)
+	r23 = s(1)*c(4)*s(6) + c(1)*c(5)
+	r33 = -s(4)*s(5)
+	dx = c(1)*c(4)*s(5)*d(2) -s(1)*c(5)*end - s(1)*d(1)
+	dy = s(1)*c(4)*s(6)*d(2) + c(1)*c(5)*end + c(1)*d(2)
+	dz = -s(4)*s(5)*end + begining + d(2)
+
+	T = np.matrix([
+		[r11, r12, r13, dx],
+		[r21, r22, r23, dy],
+		[r31, r32, r33, dz],
+		[  0,   0,   0,  1]
+	])
+	return T
+
+
+for i in range(20000):
+
+	currT = get_T_matrix(variables)
+	currPos = np.array((currT[0,3], currT[1,3], currT[2,3]))
+
+	newVars = random_step(variables)
+	newT = get_T_matrix(newVars)
+	newPos =  np.array((newT[0,3], newT[1,3], newT[2,3]))
+
+	if cost(currPos, goal) > cost(newPos, goal):
+		print(i)
+		variables = newVars
+
+
+currT = get_T_matrix(variables)
+currPos = np.array((currT[0,3], currT[1,3], currT[2,3]))
+print("goal:", goal)
+print("final position:", currPos)
+print("distance to goal: %.5f m" % cost(currPos, goal))
+for i, j in enumerate(ts):
+	print("theta %d: %.5f rad" % (j+1, variables[j]))
+print("d%d: %.5f m" % (1, begining))
+for i, j in enumerate(ds):
+	print("d%d: %.5f m" % (j+1, variables[j]))
+print("d%d: %.5f m" % (6, end))
+
+
+
