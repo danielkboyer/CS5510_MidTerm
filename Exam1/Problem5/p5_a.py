@@ -11,13 +11,13 @@ variables = np.array([0.0,0.0,0.0,0.0,0.0,0.0]) # t1, d2, d3, t4, t5, t6
 
 
 
-def random_step(curr_variables):
+def random_step(curr_variables, quench=1):
 	new_variables = np.array([i for i in curr_variables])
 	for index in ts:
 		new_variables[index] += np.pi * 2 * (np.random.rand() - 0.5) * 2
 
 	for index in ds:
-		new_variables[index] += np.random.rand() * 0.005
+		new_variables[index] += (np.random.rand() - 0.5) * 0.05 * quench
 
 	return new_variables
 
@@ -56,12 +56,13 @@ def get_T_matrix(variables):
 	return T
 
 
-for i in range(20000):
+n = 400000
+for i in range(1,n):
 
 	currT = get_T_matrix(variables)
 	currPos = np.array((currT[0,3], currT[1,3], currT[2,3]))
 
-	newVars = random_step(variables)
+	newVars = random_step(variables, quench=np.minimum(1, n/i))
 	newT = get_T_matrix(newVars)
 	newPos =  np.array((newT[0,3], newT[1,3], newT[2,3]))
 
