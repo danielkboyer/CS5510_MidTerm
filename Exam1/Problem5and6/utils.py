@@ -16,8 +16,12 @@ def random_step(curr_variables, quench=1):
 	return new_variables
 
 
-def cost(p1, p2): # distance between points
+def dist(p1, p2,): # distance between points
 	return np.linalg.norm(p1 - p2)
+
+def cost(p1, p2, _, __):
+	return dist(p1, p2)
+
 
 def get_T_matrix(variables):
 	def c(index):
@@ -51,7 +55,7 @@ def get_T_matrix(variables):
 
 
 
-def find_inverse_kinematics(goal, variables, iterations):
+def find_inverse_kinematics(goal, variables, iterations, cost=cost):
 	for i in range(1,iterations):
 
 		currT = get_T_matrix(variables)
@@ -61,8 +65,8 @@ def find_inverse_kinematics(goal, variables, iterations):
 		newT = get_T_matrix(newVars)
 		newPos =  np.array((newT[0,3], newT[1,3], newT[2,3]))
 
-		if cost(currPos, goal) > cost(newPos, goal):
-			print("%d: %.2f" % (i, cost(newPos, goal)))
+		if cost(currPos, goal, variables, newVars) > cost(newPos, goal, variables, newVars):
+			print("%d: %.2f" % (i, cost(newPos, goal, variables, newVars)))
 			variables = newVars
 
 
@@ -70,7 +74,7 @@ def find_inverse_kinematics(goal, variables, iterations):
 	currPos = np.array((currT[0,3], currT[1,3], currT[2,3]))
 	print("goal:", goal)
 	print("final position:", currPos)
-	print("distance to goal: %.5f m" % cost(currPos, goal))
+	print("distance to goal: %.5f m" % dist(currPos, goal))
 	for i, j in enumerate(ts):
 		print("theta %d: %.5f rad" % (j+1, variables[j]))
 	print("d%d: %.5f m" % (1, beginning))
