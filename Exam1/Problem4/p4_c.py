@@ -13,4 +13,4 @@ def get_h_matrix(theta, length):
 
 a0 = get_h_matrix(np.pi/6, 0.6)
 a1 = get_h_matrix(np.pi/4, 0.4)
-print(np.matmul(a0, a1))
+print("T = %s" % np.matmul(a0, a1))
