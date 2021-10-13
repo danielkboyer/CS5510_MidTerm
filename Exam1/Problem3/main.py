@@ -1,36 +1,43 @@
-# Local imports
-from agents import *
+import the_agent
+import environment
+import matplotlib.pyplot as plt
+import time
+from collections import deque
+import numpy as np
 
-# OpenAI Gym imports
-import gym
-from gym import wrappers
+name = 'PongDeterministic-v4'
 
-environment = gym.make("CartPole-v1")
-environment = wrappers.Monitor(
-    environment,  # environment to watch
-    f"./videos/",  # where to save videos
-    force=True,  # clear old videos
-    video_callable=lambda episode_id: episode_id == 2999,  # what run to record
-)
-agent = DeepQualityNetworkAgent(environment)
+agent = the_agent.Agent(possible_actions=[0,2,3],starting_mem_len=50000,max_mem_len=750000,starting_epsilon = 1, learn_rate = .00025)
+env = environment.make_env(name,agent)
 
-for iteration in range(3000):
+last_100_avg = [-21]
+scores = deque(maxlen = 100)
+max_score = -21
 
-    done = False
-    state = environment.reset()
-    steps = 0
+""" If testing:
+agent.model.load_weights('recent_weights.hdf5')
+agent.model_target.load_weights('recent_weights.hdf5')
+agent.epsilon = 0.0
+"""
 
-    while not done:
-        action = agent.act(state)
-        next_state, reward, done, _ = environment.step(action)
-        agent.learn(state, next_state, action, reward, done)
-        state = next_state
-        steps += 1
+env.reset()
 
-    agent.finish_iteration(iteration)
-    print(
-        f"Iteration: {iteration}, Exploration Rate: {agent.exploration_rate:.7f}, Steps: {steps}"
-    )
+for i in range(1000000):
+    timesteps = agent.total_timesteps
+    timee = time.time()
+    score = environment.play_episode(name, env, agent, debug = False) #set debug to true for rendering
+    scores.append(score)
+    if score > max_score:
+        max_score = score
 
-agent.make_animations()
-environment.close()
+    print('\nEpisode: ' + str(i))
+    print('Steps: ' + str(agent.total_timesteps - timesteps))
+    print('Duration: ' + str(time.time() - timee))
+    print('Score: ' + str(score))
+    print('Max Score: ' + str(max_score))
+    print('Epsilon: ' + str(agent.epsilon))
+
+    if i%100==0 and i!=0:
+        last_100_avg.append(sum(scores)/len(scores))
+        plt.plot(np.arange(0,i+1,100),last_100_avg)
+        plt.show()
