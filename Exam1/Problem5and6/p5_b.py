@@ -1,6 +1,6 @@
 
 import numpy as np
-from utils import find_inverse_kinematics
+from utils import find_inverse_kinematics, dist
 
 goal = np.array((1.2, 0.8, 0.5))
 t1 = np.radians(-90)
@@ -18,4 +18,6 @@ variables = np.array([
 	t5, #t5
 	t6  #t6
 ])
-find_inverse_kinematics(goal, variables, 40000)
+def cost(p1, p2, currVariables, newVariables):
+	return dist(p1,p2)
+find_inverse_kinematics(goal, variables, 400, cost=cost)
