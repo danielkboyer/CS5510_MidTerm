@@ -1,0 +1,13 @@
+cost(q1, q2, ..., 16):
+	total deltaQn = 
+	# delta from start
+minimize d s.t.  Q <= alpha	
+d2: you know what that 
+# d's: assume a radius of rotation
+# or just minimize d
+
+
+vector correction model (vec m model)
+variance of error over time
+
+spot simulator webots
