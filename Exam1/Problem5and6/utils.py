@@ -8,7 +8,7 @@ ds = np.array([1, 2])
 def random_step(curr_variables, quench=1):
 	new_variables = np.array([i for i in curr_variables])
 	for index in ts:
-		new_variables[index] += np.pi * 2 * (np.random.rand() - 0.5) * 2
+		new_variables[index] += np.pi * (np.random.rand() - 0.5) * 2 * quench
 
 	for index in ds:
 		new_variables[index] += (np.random.rand() - 0.5) * 0.05 * quench
@@ -19,7 +19,7 @@ def random_step(curr_variables, quench=1):
 def dist(p1, p2,): # distance between points
 	return np.linalg.norm(p1 - p2)
 
-def cost(p1, p2, _, __):
+def cost(p1, p2, currVariables, newVariables):
 	return dist(p1, p2)
 
 
