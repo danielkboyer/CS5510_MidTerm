@@ -3,6 +3,7 @@ import numpy as np
 from numpy.core.fromnumeric import var
 from numpy.core.numeric import Infinity
 from utils import find_inverse_kinematics, dist, ts, ds
+BEST_ALPHA = 17.91
 def d_theta(arc_len):
 	return arc_len / ACTUATOR_RADIUS
 
