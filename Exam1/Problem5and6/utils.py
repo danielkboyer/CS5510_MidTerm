@@ -10,6 +10,10 @@ def random_step(curr_variables, quench=1):
 	new_variables = np.array([i for i in curr_variables])
 	for index in ts:
 		new_variables[index] += np.pi * (np.random.rand() - 0.5) * 2 * quench
+		# if new_variables[index] > np.pi:
+		# 	new_variables[index] -= np.pi
+		# elif new_variables[index] < -np.pi:
+		# 	new_variables += np.pi
 
 	for index in ds:
 		new_variables[index] += (np.random.rand() - 0.5) * 0.05 * quench
@@ -20,7 +24,7 @@ def random_step(curr_variables, quench=1):
 def dist(p1, p2,): # distance between points
 	return np.linalg.norm(p1 - p2)
 
-def cost(p1, p2, currVariables):
+def cost(p1, p2, _, __, ___, ____, _____, ______): # needs to match more complex cost functions
 	return dist(p1, p2)
 
 
@@ -56,25 +60,24 @@ def get_T_matrix(variables):
 
 
 
-def find_inverse_kinematics(goal, variables, iterations, cost=cost):
+def find_inverse_kinematics(goal, variables, iterations, cost=cost, ALPHA=None, ay_axis=None, ax_axis=None, original_configuration=None):
 	x_axis = []
 	y_axis = []
-	print(iterations)
 	for i in range(1,iterations):
 
 		currT = get_T_matrix(variables)
 		currPos = np.array((currT[0,3], currT[1,3], currT[2,3]))
-		currCost = cost(currPos, goal, variables, True)
+		currCost = cost(currPos, goal, variables, True, ALPHA, ay_axis, ax_axis, original_configuration)
 
 		newVars = random_step(variables, quench=1 - (i * 1/iterations))
 		newT = get_T_matrix(newVars)
 		newPos =  np.array((newT[0,3], newT[1,3], newT[2,3]))
-		newCost = cost(newPos, goal, newVars, False)
+		newCost = cost(newPos, goal, newVars, False, ALPHA, ay_axis, ax_axis, original_configuration)
 
 
 		if currCost > newCost:
 			variables = newVars
-			# print("%d: %.2f" % (i, newCost))
+			print("%d: %.2f" % (i, newCost))
 		x_axis.append(x_axis[-1]+1 if len(x_axis)> 0 else 1)
 		y_axis.append(currCost)
 
