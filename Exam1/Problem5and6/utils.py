@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 beginning = 1.1 #d1
 end = 1.2 #d6
 ts = np.array([0, 3, 4, 5])
@@ -19,7 +20,7 @@ def random_step(curr_variables, quench=1):
 def dist(p1, p2,): # distance between points
 	return np.linalg.norm(p1 - p2)
 
-def cost(p1, p2, currVariables, newVariables):
+def cost(p1, p2, currVariables):
 	return dist(p1, p2)
 
 
@@ -56,18 +57,26 @@ def get_T_matrix(variables):
 
 
 def find_inverse_kinematics(goal, variables, iterations, cost=cost):
+	x_axis = []
+	y_axis = []
+	print(iterations)
 	for i in range(1,iterations):
 
 		currT = get_T_matrix(variables)
 		currPos = np.array((currT[0,3], currT[1,3], currT[2,3]))
+		currCost = cost(currPos, goal, variables, True)
 
 		newVars = random_step(variables, quench=1 - (i * 1/iterations))
 		newT = get_T_matrix(newVars)
 		newPos =  np.array((newT[0,3], newT[1,3], newT[2,3]))
+		newCost = cost(newPos, goal, newVars, False)
 
-		if cost(currPos, goal, variables, newVars) > cost(newPos, goal, variables, newVars):
-			print("%d: %.2f" % (i, cost(newPos, goal, variables, newVars)))
+
+		if currCost > newCost:
 			variables = newVars
+			# print("%d: %.2f" % (i, newCost))
+		x_axis.append(x_axis[-1]+1 if len(x_axis)> 0 else 1)
+		y_axis.append(currCost)
 
 
 	currT = get_T_matrix(variables)
@@ -81,4 +90,7 @@ def find_inverse_kinematics(goal, variables, iterations, cost=cost):
 	for i, j in enumerate(ds):
 		print("d%d: %.5f m" % (j+1, variables[j]))
 	print("d%d: %.5f m" % (6, end))
+	return [[x_axis, y_axis], dist(currPos, goal)]
+	# plt.plot(x_axis, y_axis, linewidth=1)
+	# plt.show()
 
