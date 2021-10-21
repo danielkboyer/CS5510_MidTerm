@@ -24,12 +24,9 @@ def cost(p1, p2, currVariables, plot, ALPHA, ay_axis, ax_axis, original_configur
 		ay_axis.append(new_vars_cost)
 		ax_axis.append(ax_axis[-1] + 1)
 	return dist(p1,p2)
-def main():
-	n = 15
-	m = 20
-	step = 0.15 
-	trials = 20 
+def tune(cost_func, n, m, step, trials):
 	bests = {}
+	fig, (ax1, ax2) = plt.subplots(1, 2)
 	for i in range(trials):
 		print('i', i)
 		best_a = n
@@ -55,7 +52,9 @@ def main():
 			ax_axis = [0]
 			ay_axis = [0]
 
-			kin_data = find_inverse_kinematics(goal, variables, 10000, cost=cost, ALPHA=ALPHA, ay_axis=ay_axis, ax_axis=ax_axis, original_configuration=original_configuration)
+			kin_data = find_inverse_kinematics(goal, variables, 10000, cost=cost_func, ALPHA=ALPHA, ay_axis=ay_axis, ax_axis=ax_axis, original_configuration=original_configuration)
+			ax1.plot(kin_data[0][0], kin_data[0][1], linewidth=1, label="alpha=%.3f"%ALPHA)
+			ax2.plot(ax_axis, ay_axis, linewidth=1)
 
 			if kin_data[1] < ACCAPTED_DISTANCE and ay_axis[-1] < best_a_score:
 				best_a = ALPHA
@@ -70,6 +69,17 @@ def main():
 	weighted_avg_alpha /= trials
 	print(bests)
 	print("The optimal alpha value is: %f" % weighted_avg_alpha)
+	ax1.legend()
+	ax1.set_xlabel('trial #')
+	ax1.set_ylabel('distance to goal')
+
+	ax2.set_xlabel('trial #')
+	ax2.set_ylabel('sum of link rotations')
+	plt.show()
 
 if __name__ == "__main__":
-	main()
+	n = 15
+	m = 20
+	step = 0.15 
+	trials = 20 
+	tune(cost, n, m, 5, 1)
