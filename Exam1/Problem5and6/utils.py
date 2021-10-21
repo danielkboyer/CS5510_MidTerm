@@ -77,23 +77,23 @@ def find_inverse_kinematics(goal, variables, iterations, cost=cost, ALPHA=None, 
 
 		if currCost > newCost:
 			variables = newVars
-			# print("%d: %.2f" % (i, newCost))
+			print("%d: %.2f" % (i, newCost))
 		x_axis.append(x_axis[-1]+1 if len(x_axis)> 0 else 1)
 		y_axis.append(currCost)
 
 
 	currT = get_T_matrix(variables)
 	currPos = np.array((currT[0,3], currT[1,3], currT[2,3]))
-	# print("goal:", goal)
-	# print("final position:", currPos)
-	# print("distance to goal: %.5f m" % dist(currPos, goal))
-	# for i, j in enumerate(ts):
-	# 	print("theta %d: %.5f rad" % (j+1, variables[j]))
-	# print("d%d: %.5f m" % (1, beginning))
-	# for i, j in enumerate(ds):
-	# 	print("d%d: %.5f m" % (j+1, variables[j]))
-	# print("d%d: %.5f m" % (6, end))
-	return [[x_axis, y_axis], dist(currPos, goal)]
+	print("goal:", goal)
+	print("final position:", currPos)
+	print("distance to goal: %.5f m" % dist(currPos, goal))
+	for i, j in enumerate(ts):
+		print("theta %d: %.5f rad" % (j+1, variables[j]))
+	print("d%d: %.5f m" % (1, beginning))
+	for i, j in enumerate(ds):
+		print("d%d: %.5f m" % (j+1, variables[j]))
+	print("d%d: %.5f m" % (6, end))
+	return [[x_axis, y_axis], dist(currPos, goal), [ax_axis, ay_axis]]
 	# plt.plot(x_axis, y_axis, linewidth=1)
 	# plt.show()
 

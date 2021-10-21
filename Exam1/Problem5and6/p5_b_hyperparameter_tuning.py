@@ -6,6 +6,12 @@ from utils import find_inverse_kinematics, dist, ts, ds
 BEST_ALPHA = 17.91
 ACTUATOR_RADIUS = 0.05
 ACCAPTED_DISTANCE = 0.01
+t1 = np.radians(-90)
+d2 = 0.5
+d3 = 1.0
+t4 = np.radians(-90)
+t5 = np.radians(90)
+t6 = np.radians(40)
 def d_theta(arc_len):
 	return arc_len / ACTUATOR_RADIUS
 
@@ -24,7 +30,14 @@ def cost(p1, p2, currVariables, plot, ALPHA, ay_axis, ax_axis, original_configur
 		ay_axis.append(new_vars_cost)
 		ax_axis.append(ax_axis[-1] + 1)
 	return dist(p1,p2)
-def tune(cost_func, n, m, step, trials):
+def tune(cost_func, n, m, step, trials, variables = np.array([
+				t1, #t1
+				d2, #d2
+				d3, #d3
+				t4, #t4
+				t5, #t5
+				t6  #t6
+])):
 	bests = {}
 	fig, (ax1, ax2) = plt.subplots(1, 2)
 	for i in range(trials):
@@ -34,20 +47,7 @@ def tune(cost_func, n, m, step, trials):
 		for ALPHA in np.arange(n,m,step):
 
 			goal = np.array((1.2, 0.8, 0.5))
-			t1 = np.radians(-90)
-			d2 = 0.5
-			d3 = 1.0
-			t4 = np.radians(-90)
-			t5 = np.radians(90)
-			t6 = np.radians(40)
-			variables = np.array([
-				t1, #t1
-				d2, #d2
-				d3, #d3
-				t4, #t4
-				t5, #t5
-				t6  #t6
-			])
+			variables = variables
 			original_configuration = np.array([i for i in variables])
 			ax_axis = [0]
 			ay_axis = [0]
