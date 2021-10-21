@@ -43,9 +43,9 @@ def get_T_matrix(variables):
 	r13 = c(1)*c(4)*s(5) - s(1)*c(5)
 	r23 = s(1)*c(4)*s(6) + c(1)*c(5)
 	r33 = -s(4)*s(5)
-	dx = c(1)*c(4)*s(5)*d(2) -s(1)*c(5)*end - s(1)*d(1)
-	dy = s(1)*c(4)*s(6)*d(2) + c(1)*c(5)*end + c(1)*d(2)
-	dz = -s(4)*s(5)*end + beginning + d(2)
+	dx = c(1)*c(4)*s(5)*end -s(1)*c(5)*end - s(1)*d(3)
+	dy = s(1)*c(4)*s(6)*end + c(1)*c(5)*end + c(1)*d(3)
+	dz = -s(4)*s(5)*end + beginning + d(1)
 
 	T = np.matrix([
 		[r11, r12, r13, dx],
