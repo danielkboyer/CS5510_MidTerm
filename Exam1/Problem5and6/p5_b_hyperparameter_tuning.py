@@ -79,4 +79,4 @@ if __name__ == "__main__":
 	m = 20
 	step = 0.15 
 	trials = 20 
-	tune(cost, n, m, 5, 1)
+	tune(cost, n, m, step, trials)

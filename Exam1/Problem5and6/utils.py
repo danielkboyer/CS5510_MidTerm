@@ -76,7 +76,7 @@ def find_inverse_kinematics(goal, variables, iterations, cost=cost, ALPHA=None, 
 
 		if currCost > newCost:
 			variables = newVars
-			print("%d: %.2f" % (i, newCost))
+			# print("%d: %.2f" % (i, newCost))
 			if get_total_cost: total_cost += get_total_cost(variables, original_configuration)
 		x_axis.append(x_axis[-1]+1 if len(x_axis)> 0 else 1)
 		y_axis.append(currCost)

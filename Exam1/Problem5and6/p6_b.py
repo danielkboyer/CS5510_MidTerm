@@ -7,7 +7,6 @@ from p5_b_hyperparameter_tuning import get_config_cost
 def total_distance(start, positions):
 	d = dist(start, positions[0])
 	for pos in range(len(positions)-1):
-		print(pos)
 		d += dist(positions[pos], positions[pos+1])
 	return d
 
@@ -36,7 +35,7 @@ def cost(p1, p2, currVariables, plot, ALPHA, ay_axis, ax_axis, original_configur
 
 goals = np.array([
 	np.array([1,1,1]),
-	np.array([-1,1,1])
+	np.array([-1,2,1])
 ])
 variables = np.array([0.0,0.0,0.0,0.0,0.0,0.0]) # t1, d2, d3, t4, t5, t6
 newT = get_T_matrix(variables)
@@ -45,12 +44,18 @@ best = find_shortest_path(newPos, goals)
 
 ay_axis=[0]
 ax_axis=[0]
-kin_data = find_inverse_kinematics(best[1], variables, 10000, cost=cost, original_configuration=[i for i in variables], get_total_cost=get_config_cost, ay_axis=ay_axis, ax_axis=ax_axis)
-first_move = kin_data[3]
+kin_data = find_inverse_kinematics(best[0], variables, 10000, cost=cost, original_configuration=[i for i in variables], get_total_cost=get_config_cost, ay_axis=ay_axis, ax_axis=ax_axis)
+next_move = kin_data[3]
 total_dist = kin_data[4]
 
+for i in range(len(best)-1):
+	kin_data = find_inverse_kinematics(best[i+1], next_move, 10000, cost=cost, original_configuration=[i for i in variables], get_total_cost=get_config_cost, ay_axis=ay_axis, ax_axis=ax_axis)
+	next_move = kin_data[3]
+	total_dist += kin_data[4]
+	
 
-print(first_move)
-print('total cost', kin_data[4])
 
+
+print("I will traverse to the goals in this order: %s, %s" % (best[0], best[1]))
+print("The total cost to travel is %.3f" % total_dist)
 
