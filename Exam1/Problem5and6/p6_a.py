@@ -2,13 +2,10 @@
 
 from matplotlib import pyplot as plt
 import numpy as np
-from numpy.core.fromnumeric import var
-from numpy.core.numeric import Infinity
-from utils import find_inverse_kinematics, dist, ts, ds
+from utils import find_inverse_kinematics
 from p5_b_hyperparameter_tuning import cost as p5_cost
 
 BEST_ALPHA = 233.866667 # this was calculated in p6_a_hyperparameter_tuning.py
-ACTUATOR_RADIUS = 0.05
 def main():
 	goal = np.array((1.2, 0.8, 0.5))
 	variables = np.array([0.0,0.0,0.0,0.0,0.0,0.0])

@@ -1,22 +1,19 @@
 import numpy as np
 from matplotlib import pyplot as plt
+ACTUATOR_RADIUS = 0.05
 beginning = 1.1 #d1
 end = 1.2 #d6
 ts = np.array([0, 3, 4, 5])
 ds = np.array([1, 2])
-# variables = np.array([0.0,0.0,0.0,0.0,0.0,0.0]) # t1, d2, d3, t4, t5, t6
 
 def random_step(curr_variables, quench=1):
 	new_variables = np.array([i for i in curr_variables])
 	for index in ts:
 		new_variables[index] += np.pi * (np.random.rand() - 0.5) * 2 * quench
-		# if new_variables[index] > np.pi:
-		# 	new_variables[index] -= np.pi
-		# elif new_variables[index] < -np.pi:
-		# 	new_variables += np.pi
 
 	for index in ds:
 		new_variables[index] += (np.random.rand() - 0.5) * 0.05 * quench
+	T = get_T_matrix(new_variables)
 
 	return new_variables
 
@@ -60,9 +57,10 @@ def get_T_matrix(variables):
 
 
 
-def find_inverse_kinematics(goal, variables, iterations, cost=cost, ALPHA=None, ay_axis=None, ax_axis=None, original_configuration=None):
+def find_inverse_kinematics(goal, variables, iterations, cost=cost, ALPHA=None, ay_axis=None, ax_axis=None, original_configuration=None, get_total_cost=None):
 	x_axis = []
 	y_axis = []
+	total_cost = 0
 	for i in range(1,iterations):
 
 		currT = get_T_matrix(variables)
@@ -72,12 +70,14 @@ def find_inverse_kinematics(goal, variables, iterations, cost=cost, ALPHA=None, 
 		newVars = random_step(variables, quench=1 - (i * 1/iterations))
 		newT = get_T_matrix(newVars)
 		newPos =  np.array((newT[0,3], newT[1,3], newT[2,3]))
+		
 		newCost = cost(newPos, goal, newVars, False, ALPHA, ay_axis, ax_axis, original_configuration)
 
 
 		if currCost > newCost:
 			variables = newVars
 			print("%d: %.2f" % (i, newCost))
+			if get_total_cost: total_cost += get_total_cost(variables, original_configuration)
 		x_axis.append(x_axis[-1]+1 if len(x_axis)> 0 else 1)
 		y_axis.append(currCost)
 
@@ -93,7 +93,7 @@ def find_inverse_kinematics(goal, variables, iterations, cost=cost, ALPHA=None, 
 	for i, j in enumerate(ds):
 		print("d%d: %.5f m" % (j+1, variables[j]))
 	print("d%d: %.5f m" % (6, end))
-	return [[x_axis, y_axis], dist(currPos, goal), [ax_axis, ay_axis]]
+	return [[x_axis, y_axis], dist(currPos, goal), [ax_axis, ay_axis], variables, total_cost]
 	# plt.plot(x_axis, y_axis, linewidth=1)
 	# plt.show()
 
