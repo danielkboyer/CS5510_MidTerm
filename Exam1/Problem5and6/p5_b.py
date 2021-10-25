@@ -2,8 +2,8 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from utils import find_inverse_kinematics
-from p5_b_hyperparameter_tuning import cost as p5_cost
-BEST_ALPHA = 17.91 # this was calculated in p5_b_hyperparameter_tuning.py
+from p5_b_hyperparameter_tuning import cost as p5_cost, BEST_ALPHA
+# BEST_ALPHA = 17.91 # this was calculated in p5_b_hyperparameter_tuning.py
 def main():
 
 	goal = np.array((1.2, 0.8, 0.5))

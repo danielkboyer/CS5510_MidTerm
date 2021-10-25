@@ -56,6 +56,6 @@ for i in range(len(best)-1):
 
 
 
-print("I will traverse to the goals in this order: %s, %s" % (best[0], best[1]))
+print("Optimal goals order: %s, %s" % (best[0], best[1]))
 print("The total cost to travel is %.3f" % total_dist)
 
