@@ -5,7 +5,7 @@ from numpy.core.numeric import Infinity
 from p5_b_hyperparameter_tuning import tune
 from utils import find_inverse_kinematics, dist, ts, ds
 ACTUATOR_RADIUS = 0.05
-BEST_ALPHA = 233.866667
+BEST_ALPHA = 160.4
 ALPHA = 1000
 def d_theta(arc_len):
 	return arc_len / ACTUATOR_RADIUS

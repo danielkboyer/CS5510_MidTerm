@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from utils import find_inverse_kinematics, dist, ts, ds, ACTUATOR_RADIUS
-BEST_ALPHA = 17.91
+BEST_ALPHA = 17.385
 ACCAPTED_DISTANCE = 0.01
 t1 = np.radians(-90)
 d2 = 0.5
