@@ -9,7 +9,9 @@
 # # insert at position 1 in the path, as 0 is the path of this file.
 # sys.path.insert(1,cwd)
 
-import AStarPlanner as AStar
+# import AStarPlanner as AStar
+import DichjstraPlanner as Dijkstra
+
 from matplotlib.pyplot import draw
 from pygame.locals import *
 import pygame
@@ -17,13 +19,24 @@ import pygame
 GRID_SIZE = 44 
  
 class Robot:
-    def __init__(self) -> None:
+    def __init__(self, path, goal):
         self.robot_radius = GRID_SIZE/2
+        # curreent goal
+        self.goal = goal
+        self.path = path
+        self.curr_goal = 0
+        
         
     x = GRID_SIZE
     y = GRID_SIZE
     speed = 1
- 
+
+    # Automaticly follow the path
+    def followPath(self, px,py):
+        for i in range(0,len(px)):
+            # find the closest point to the robot
+            
+    
     def moveRight(self):
         self.x = self.x + self.speed
  
@@ -76,7 +89,7 @@ class Planner:
     def __init__(self,maze, robot_radius):
         self.m_maze = maze
         self.m_robot_radius = robot_radius
-        self.get_path([0,0],[self.m_maze.M-1,self.m_maze.N-1])
+        self.get_path([1,1],[self.m_maze.M-2,self.m_maze.N-2])
         
     def get_path(self,start,goal):
 
@@ -85,7 +98,7 @@ class Planner:
         ox = []
         oy = []
         for i in range(0,self.m_maze.M * self.m_maze.N):
-            print("i: ",i," bx: ",bx," by: ",by)
+            # print("i: ",i," bx: ",bx," by: ",by)
             if self.m_maze.map_mat[ bx + (by*self.m_maze.M) ] == 1:
                ox.append(bx * GRID_SIZE)
                oy.append(by * GRID_SIZE)
@@ -100,10 +113,12 @@ class Planner:
             
             #    display_surf.blit(image_surf,( bx * 44 , by * 44))
             
-        a_star = AStar.AStarPlanner(ox, oy, GRID_SIZE, self.m_robot_radius)
-        self.rx, self.ry = a_star.planning(start[0],start[1], goal[0]*GRID_SIZE, goal[1]*GRID_SIZE)
-        print('self.rx',self.rx)
-        print('self.ry',self.ry)
+        # a_star = AStar.AStarPlanner(ox, oy, GRID_SIZE, 1) #self.m_robot_radius)
+        # self.rx, self.ry = a_star.planning(start[0],start[1], goal[0]*GRID_SIZE, goal[1]*GRID_SIZE)
+        dijk_star = Dijkstra.Dijkstra(ox, oy, GRID_SIZE, self.m_robot_radius)
+        self.rx, self.ry = dijk_star.planning(start[0],start[1], goal[0]*GRID_SIZE, goal[1]*GRID_SIZE)
+        # print('self.rx',self.rx)
+        # print('self.ry',self.ry)
 
     def draw(self,display_surf,path_surf):
 
