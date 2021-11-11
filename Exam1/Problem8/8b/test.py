@@ -16,7 +16,10 @@ import pygame
  
 GRID_SIZE = 44 
  
-class Player:
+class Robot:
+    def __init__(self) -> None:
+        self.robot_radius = GRID_SIZE/2
+        
     x = GRID_SIZE
     y = GRID_SIZE
     speed = 1
@@ -61,37 +64,52 @@ class Maze:
        bx = 0
        by = 0
        for i in range(0,self.M*self.N):
-           if self.map_mat[ bx + (by*self.M) ] == 1:
-               display_surf.blit(image_surf,( bx * GRID_SIZE , by * GRID_SIZE))
-      
-           bx = bx + 1
-           if bx > self.M-1:
-               bx = 0 
-               by = by + 1
+            if self.map_mat[ bx + (by*self.M) ] == 1:
+                display_surf.blit(image_surf,( bx * GRID_SIZE , by * GRID_SIZE))
+        
+            bx = bx + 1
+            if bx > self.M-1:
+                bx = 0 
+                by = by + 1
 
 class Planner:
     def __init__(self,maze, robot_radius):
         self.m_maze = maze
         self.m_robot_radius = robot_radius
-        self.get_path(self.m_maze,[0,0],[self.m_maze.M-1,self.m_maze.N-1])
+        self.get_path([0,0],[self.m_maze.M-1,self.m_maze.N-1])
         
     def get_path(self,start,goal):
 
         bx = 0
         by = 0
-        ox =[]
+        ox = []
         oy = []
-        for i in range(0,self.m_maze.M*self.m_maze.N):
-           if self.m_maze.map_mat[ bx + (by*self.m_maze.M) ] == 1:
-               ox = ox + [bx*GRID_SIZE]
-               oy = oy + [by*GRID_SIZE]
+        for i in range(0,self.m_maze.M * self.m_maze.N):
+            print("i: ",i," bx: ",bx," by: ",by)
+            if self.m_maze.map_mat[ bx + (by*self.m_maze.M) ] == 1:
+               ox.append(bx * GRID_SIZE)
+               oy.append(by * GRID_SIZE)
+            
+            bx = bx + 1
+            # bx = bx % self.m_maze.M
+            
+            if bx > self.m_maze.M-1:
+               bx = 0 
+               by = by + 1
+               
+            
             #    display_surf.blit(image_surf,( bx * 44 , by * 44))
             
         a_star = AStar.AStarPlanner(ox, oy, GRID_SIZE, self.m_robot_radius)
-        self.rx, self.ry = a_star.planning(start[0],start[1], goal[0], goal[1])
+        self.rx, self.ry = a_star.planning(start[0],start[1], goal[0]*GRID_SIZE, goal[1]*GRID_SIZE)
+        print('self.rx',self.rx)
+        print('self.ry',self.ry)
+
+    def draw(self,display_surf,path_surf):
+
+        for i in range(0,len(self.rx)):
+            display_surf.blit(path_surf,( self.rx[i] , self.ry[i]))
         
-    def draw(self,display_surf,image_surf):
-        pass
 
 
 class App:
@@ -99,14 +117,15 @@ class App:
     
     windowWidth = 49*GRID_SIZE
     windowHeight = 17*GRID_SIZE
-    player = 0
+    robot = 0
     def __init__(self):
         self._running = True
         self._display_surf = None
         self._image_surf = None
         self._block_surf = None
-        self.player = Player()
+        self.robot = Robot()
         self.maze = Maze()
+        self.planner = Planner(self.maze,self.robot.robot_radius)
  
     def on_init(self):
         pygame.init()
@@ -138,8 +157,9 @@ class App:
     
     def on_render(self):
         self._display_surf.fill((0,0,0))
-        self._display_surf.blit(self._image_surf,(self.player.x,self.player.y))
+        self._display_surf.blit(self._image_surf,(self.robot.x,self.robot.y))
         self.maze.draw(self._display_surf, self._block_surf)
+        self.planner.draw(self._display_surf,self._path_surf)
         
         pygame.display.flip()
  
@@ -155,16 +175,16 @@ class App:
             keys = pygame.key.get_pressed()
             
             if (keys[K_RIGHT]):
-                self.player.moveRight()
+                self.robot.moveRight()
  
             if (keys[K_LEFT]):
-                self.player.moveLeft()
+                self.robot.moveLeft()
  
             if (keys[K_UP]):
-                self.player.moveUp()
+                self.robot.moveUp()
  
             if (keys[K_DOWN]):
-                self.player.moveDown()
+                self.robot.moveDown()
  
             if (keys[K_ESCAPE]):
                 self._running = False
