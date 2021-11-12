@@ -68,7 +68,7 @@ class Robot:
         # if the distance to the goal is less than the radius of the robot
         if np.sqrt((self.goal[0] - self.x)**2 + (self.goal[1] - self.y)**2) < self.robot_radius:
             # if the current goal is the last goal
-            if self.curr_goal == (-1 *(len(self.path[0]) - 1)):
+            if self.curr_goal == ((len(self.path[0])-1)): 
                 # self.curr_goal = len(self.path) - 1
                 self.x =  0
                 self.y =  0
@@ -77,7 +77,7 @@ class Robot:
                 self.goal = (self.path[0][self.curr_goal], self.path[1][self.curr_goal] )
                 return
             else:
-                self.curr_goal -= 1
+                self.curr_goal += 1
                 self.goal = (self.path[0][self.curr_goal], self.path[1][self.curr_goal] )
 
         # # this model is from http://wseas.us/e-library/conferences/2008/uk/ISPRA/ispra-08.pdf
@@ -100,7 +100,8 @@ class Robot:
         pygame.draw.polygon(display_surf, (255,255,255), (
             (int(self.x + self.robot_radius*np.cos(self.psi)), int(self.y + self.robot_radius*np.sin(self.psi))), 
             (int(self.x + self.robot_radius*np.cos(self.psi + np.pi/2)), int(self.y + self.robot_radius*np.sin(self.psi + np.pi/2))),
-            (int(self.x), int(self.y)), 
+            (int(self.x + self.robot_radius*np.cos(self.psi - np.pi/2)), int(self.y + self.robot_radius*np.sin(self.psi - np.pi/2))),
+            # (int(self.x), int(self.y)), 
             ))
         
         
@@ -243,9 +244,18 @@ class App:
         # self._image_surf = pygame.image.load("player.png").convert()
         # self._block_surf = pygame.image.load("block.png").convert()
  
-    def on_event(self, event):
-        if event.type == QUIT:
-            self._running = False
+
+        # if event.type == QUIT:
+        #     self._running = False
+        
+        # # if the user clicks the mouse at a location on the screen set that to the new goal
+        # if event.type == pygame.MOUSEBUTTONDOWN:
+        #     pos = pygame.mouse.get_pos()
+        #     # draw mouse position
+        #     pygame.draw.circle(self._display_surf, (0,255,0), pos, 5)
+        #     self.planner.goal = [int(pos[0]/GRID_SIZE),int(pos[1]/GRID_SIZE)]
+        #     self.planner.get_path(self.robot.start,self.planner.goal)
+        #     self.robot.path = self.planner.get_path(self.robot.start,self.planner.goal)
  
     def on_loop(self):
         pass
@@ -270,6 +280,23 @@ class App:
         while( self._running ):
             pygame.event.pump()
             keys = pygame.key.get_pressed()
+            
+            # on mouse move event draw the mouse position
+            pos =pygame.mouse.get_pos()
+            if pygame.mouse.get_pressed() == (1,0,0):
+                print(pos)
+                if pos[0] < 49*GRID_SIZE and pos[1] < 17*GRID_SIZE:
+                    pygame.draw.circle(self._display_surf, (0,255,0), pos, 10)
+                    self.planner.goal = [int(pos[0]/GRID_SIZE),int(pos[1]/GRID_SIZE)]
+                    # self.planner.get_path((self.robot.x,self.robot.y),self.planner.goal)
+                    self.robot.curr_goal =0
+                    self.robot.path = self.planner.get_path((self.robot.x,self.robot.y),self.planner.goal)
+                    
+            # check if the mouse is in the maze
+            if pos[0] < 49*GRID_SIZE and pos[1] < 17*GRID_SIZE:
+                # draw mouse position
+                pygame.draw.circle(self._display_surf, (0,255,0), pos, 5)
+        
             
             if (keys[K_RIGHT]):
                 self.robot.moveRight()

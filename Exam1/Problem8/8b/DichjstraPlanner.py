@@ -120,6 +120,9 @@ class Dijkstra:
 
         rx, ry = self.calc_final_path(goal_node, closed_set)
 
+        # inverse the list
+        rx = rx[::-1]
+        ry = ry[::-1]
         return rx, ry
 
     def calc_final_path(self, goal_node, closed_set):
