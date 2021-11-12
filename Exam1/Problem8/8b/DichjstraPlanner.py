@@ -8,6 +8,7 @@ author: Atsushi Sakai(@Atsushi_twi)
 
 import matplotlib.pyplot as plt
 import math
+import numpy as np
 
 show_animation = False
 
@@ -123,6 +124,9 @@ class Dijkstra:
         # inverse the list
         rx = rx[::-1]
         ry = ry[::-1]
+        # conveert to np.array
+        rx = np.array(rx)
+        ry = np.array(ry)
         return rx, ry
 
     def calc_final_path(self, goal_node, closed_set):

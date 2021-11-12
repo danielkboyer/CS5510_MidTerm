@@ -63,16 +63,16 @@ class Robot:
 
         Psi_dot =(alpha - self.psi ) # (self.Vf * np.tan(alpha)) / self.width
         
-        self.psi += Psi_dot* 1.0001 #*(1/60)
+        self.psi += Psi_dot* 1.1 #*(1/60)
 
         # if the distance to the goal is less than the radius of the robot
         if np.sqrt((self.goal[0] - self.x)**2 + (self.goal[1] - self.y)**2) < self.robot_radius:
             # if the current goal is the last goal
             if self.curr_goal == ((len(self.path[0])-1)): 
                 # self.curr_goal = len(self.path) - 1
-                self.x =  0
-                self.y =  0
-                self.curr_goal = -1
+                self.x =  self.path[0][0]
+                self.y =  self.path[1][0]
+                self.curr_goal = 0
                 self.history = []
                 self.goal = (self.path[0][self.curr_goal], self.path[1][self.curr_goal] )
                 return
@@ -193,7 +193,7 @@ class Planner:
         self.rx, self.ry = dijk_star.planning(start[0],start[1], goal[0]*GRID_SIZE, goal[1]*GRID_SIZE)
         # print('self.rx',self.rx)
         # print('self.ry',self.ry)
-        return [self.rx, self.ry]
+        return [self.rx +GRID_SIZE/4, self.ry+GRID_SIZE/4]
 
     def draw(self,display_surf,path_surf):
 
@@ -288,15 +288,9 @@ class App:
                 if pos[0] < 49*GRID_SIZE and pos[1] < 17*GRID_SIZE:
                     pygame.draw.circle(self._display_surf, (0,255,0), pos, 10)
                     self.planner.goal = [int(pos[0]/GRID_SIZE),int(pos[1]/GRID_SIZE)]
-                    # self.planner.get_path((self.robot.x,self.robot.y),self.planner.goal)
-                    self.robot.curr_goal =0
+                    self.robot.curr_goal = 0
                     self.robot.path = self.planner.get_path((self.robot.x,self.robot.y),self.planner.goal)
                     
-            # check if the mouse is in the maze
-            if pos[0] < 49*GRID_SIZE and pos[1] < 17*GRID_SIZE:
-                # draw mouse position
-                pygame.draw.circle(self._display_surf, (0,255,0), pos, 5)
-        
             
             if (keys[K_RIGHT]):
                 self.robot.moveRight()
