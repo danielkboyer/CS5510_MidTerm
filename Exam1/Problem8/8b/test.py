@@ -30,7 +30,7 @@ class Robot:
         self.path = path
         self.curr_goal_cnt = 0
         self.width = 33
-        self.long = 40
+        self.length = 40
         self.alpha = -np.pi/6
         self.R = 4/np.tan(self.alpha)
         self.Vf = 1
@@ -60,11 +60,17 @@ class Robot:
         line_scale = 500
         pygame.draw.line(display_surf, (255,255,0), (self.x, self.y), (self.x + line_scale*np.cos(alpha), self.y + line_scale*np.sin(alpha)))
 
-        Psi_dot =(alpha - self.psi ) # (self.Vf * np.tan(alpha)) / self.width
-        # Psi_dot = (self.Vf * np.tan(alpha)) / self.width
+        # Psi_dot =(alpha - self.psi ) # (self.Vf * np.tan(alpha)) / self.width
+        
+        R = 10
+        vl = (alpha - self.psi) * (R -self.width / 2) # self.Vf * np.sin(alpha - self.psi)
+        vr = (alpha - self.psi) * (R +self.width / 2) #self.Vf * np.sin(alpha + self.psi)
         
         
-        self.psi += Psi_dot * 0.05 #*(1/60)
+        Psi_dot = (vr - vl) / self.width
+        
+        time = 0.05
+        self.psi += Psi_dot *time #* (self.width/self.length) 
 
         # if the distance to the goal is less than the radius of the robot
         if np.sqrt((self.goal[0] - self.x)**2 + (self.goal[1] - self.y)**2) < self.robot_radius:
@@ -84,8 +90,8 @@ class Robot:
         # # this model is from http://wseas.us/e-library/conferences/2008/uk/ISPRA/ispra-08.pdf
         # # x&=VF cosφ−VS sinφ
         # # y&=VF sinφ+VS cosφ
-        self.x +=  self.Vf * np.cos(self.psi) 
-        self.y +=  self.Vf * np.sin(self.psi)
+        self.x +=  self.Vf/2 * np.cos(self.psi) 
+        self.y +=  self.Vf/2 * np.sin(self.psi)
         
         self.history.append((self.x, self.y))    
         # draw your history line path
