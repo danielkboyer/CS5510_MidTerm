@@ -28,7 +28,7 @@ class Robot:
         self.y = start[1]
         self.goal = goal
         self.path = path
-        self.curr_goal = 0
+        self.curr_goal_cnt = 0
         self.width = 33
         self.long = 40
         self.alpha = -np.pi/6
@@ -54,31 +54,32 @@ class Robot:
         line_scale = 5000
         pygame.draw.line(display_surf, (0,255,0), (self.x, self.y), (self.x + line_scale*np.cos(self.psi), self.y + line_scale*np.sin(self.psi)))
         
-        
-        # update alpha to turn twards the goal point
+
         alpha = np.arctan2(self.goal[1] - self.y, self.goal[0] - self.x) 
 
         line_scale = 500
         pygame.draw.line(display_surf, (255,255,0), (self.x, self.y), (self.x + line_scale*np.cos(alpha), self.y + line_scale*np.sin(alpha)))
 
         Psi_dot =(alpha - self.psi ) # (self.Vf * np.tan(alpha)) / self.width
+        # Psi_dot = (self.Vf * np.tan(alpha)) / self.width
         
-        self.psi += Psi_dot* 1.1 #*(1/60)
+        
+        self.psi += Psi_dot * 0.05 #*(1/60)
 
         # if the distance to the goal is less than the radius of the robot
         if np.sqrt((self.goal[0] - self.x)**2 + (self.goal[1] - self.y)**2) < self.robot_radius:
             # if the current goal is the last goal
-            if self.curr_goal == ((len(self.path[0])-1)): 
+            if self.curr_goal_cnt == ((len(self.path[0])-1)): 
                 # self.curr_goal = len(self.path) - 1
                 self.x =  self.path[0][0]
                 self.y =  self.path[1][0]
-                self.curr_goal = 0
+                self.curr_goal_cnt = 0
                 self.history = []
-                self.goal = (self.path[0][self.curr_goal], self.path[1][self.curr_goal] )
+                self.goal = (self.path[0][self.curr_goal_cnt], self.path[1][self.curr_goal_cnt] )
                 return
             else:
-                self.curr_goal += 1
-                self.goal = (self.path[0][self.curr_goal], self.path[1][self.curr_goal] )
+                self.curr_goal_cnt += 1
+                self.goal = (self.path[0][self.curr_goal_cnt], self.path[1][self.curr_goal_cnt] )
 
         # # this model is from http://wseas.us/e-library/conferences/2008/uk/ISPRA/ispra-08.pdf
         # # x&=VF cosφ−VS sinφ
@@ -94,7 +95,7 @@ class Robot:
         # print('[',self.x,self.y,']')
 
         # # draw goal
-        pygame.draw.circle(display_surf, (255, 0, 0), (int(self.goal[0]), int(self.goal[1])), self.robot_radius/2)
+        pygame.draw.circle(display_surf, (0, 255, 0), (int(self.goal[0]), int(self.goal[1])), self.robot_radius/2)
         
         # create a triangle serface
         pygame.draw.polygon(display_surf, (255,255,255), (
@@ -276,8 +277,9 @@ class App:
     def on_execute(self):
         if self.on_init() == False:
             self._running = False
- 
+            
         while( self._running ):
+            
             pygame.event.pump()
             keys = pygame.key.get_pressed()
             
@@ -288,7 +290,7 @@ class App:
                 if pos[0] < 49*GRID_SIZE and pos[1] < 17*GRID_SIZE:
                     pygame.draw.circle(self._display_surf, (0,255,0), pos, 10)
                     self.planner.goal = [int(pos[0]/GRID_SIZE),int(pos[1]/GRID_SIZE)]
-                    self.robot.curr_goal = 0
+                    self.robot.curr_goal_cnt = 0
                     self.robot.path = self.planner.get_path((self.robot.x,self.robot.y),self.planner.goal)
                     
             
